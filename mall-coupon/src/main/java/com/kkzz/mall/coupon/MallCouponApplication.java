@@ -24,7 +24,10 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  *      可以定义group并在bootstrap中配置spring.cloud.nacos.config.group=xxx 来确定要使用的配置文件
  * 每个微服务创建自己的命名空间,使用配置分组区分环境
  *三: 同时加载多个配置集
- *
+ *  1.微服务中的人任何配置信息,任何配置文件都可以放在配置中心中
+ *  2.只需要在bootstrap.properties说明加载配置中心哪些配置文件即可
+ *  3.@Value,@ConfigurationProperties等,springboot中的任何从配置文件中取值的方法都可以使用
+ * 优先配置中心中有的值
  */
 @EnableDiscoveryClient
 @SpringBootApplication

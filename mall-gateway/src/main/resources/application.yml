@@ -1,0 +1,35 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: test_route
+          uri: https://www.baidu.com
+          predicates:
+            - Query=url,baidu
+        - id: qq_route
+          uri: https://www.qq.com
+          predicates:
+            - Query=url,qq
+        - id: product_route
+          uri: lb://mall-product
+          predicates:
+            - Path=/api/product/**
+          filters:
+            - RewritePath=/api/(?<segment>/?.*), /$\{segment}
+        - id: admin_route
+          uri: lb://renren-fast
+          predicates:
+            - Path=/api/**
+          filters:
+            - RewritePath=/api/(?<segment>/?.*), /renren-fast/$\{segment}
+
+
+## 这里要注意路由的顺序,否则会发生覆盖的情况
+## 前端醒目.默认都带api前缀
+## http://localhost:88/api/captcha.jpg 前端发来的请求
+#流程: 先进入网关,发现符合- Path=/api/** 该断言,所以转到renren-fast
+#     renren-fast需要从注册中心找到,但是这里我们的请求会变成http://renren-fast:8080/api/captcha.jpg
+#这并不是我们希望的,renren-fast项目里指定的路径应该是http://renren-fast:8080/renren-fast/captcha.jpg
+#即会多余一个api路径所以我们需要在网关中进行配置完成这一操作 即添加过滤器
+
+#但是在完成验证码功能之后,在登录的时候会发生跨域错误,这时我们需要为请求添加请求头
