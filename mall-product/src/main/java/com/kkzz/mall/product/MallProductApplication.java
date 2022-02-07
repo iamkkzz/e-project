@@ -32,8 +32,31 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 /**
  * 3.JSR303
- * 1.给Bean添加校验注解
- * 2.
+ *  1.给Bean添加校验注解,参考javax.validation.constraints包下的注解,并定义自己的message提示
+ *  2.开启校验功能@Valid效果,校验错误以后会有默认的响应
+ *  3.给校验的bean后紧跟一个bindingResult,就可以获取到校验的结果
+ *  4.分组校验(多场景的复杂校验)
+ *      1.@NotBlank(message = "品牌名不能为空",groups = {AddGroup.class,UpdateGroup.class})
+ *        给检验注解标注什么情况需要进行校验
+ *      2.@Validated({AddGroup.class})
+ *      3.如果开启了分组的功能,那么没有指定分组的校验注解将不会生效
+ *  5.自定义校验
+ *      1.编写一个自定义的校验注解
+ *      @Documented
+ *      @Constraint(validatedBy = {ListValueConstraintValidator.class})
+ *      这里可以指定多个不同的校验器
+ *      @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
+ *      @Retention(RUNTIME)
+ *      2.编写一个自定义校验器
+ *      ListValueConstraintValidator
+ *      3.关联自定义校验器和自定义的校验注解@Constraint(validatedBy = {ListValueConstraintValidator.class})
+ *
+ */
+
+/**
+ * 4.统一异常处理
+ *  1.使用@ControllerAdvice
+ *  2.使用@ExceptionHandler标注方法可以处理的异常
  */
 @EnableDiscoveryClient
 @SpringBootApplication
