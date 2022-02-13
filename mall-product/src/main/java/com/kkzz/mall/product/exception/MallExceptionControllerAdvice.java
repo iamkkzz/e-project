@@ -26,6 +26,7 @@ public class MallExceptionControllerAdvice {
     }
     @ExceptionHandler(value = Throwable.class)
     public R handleException(Throwable throwable){
+        log.error("错误异常{}",throwable);
         return R.error(BizCodeEnume.UNKNOW_EXCEPTION.getCode(),BizCodeEnume.UNKNOW_EXCEPTION.getMsg());
     }
 }
