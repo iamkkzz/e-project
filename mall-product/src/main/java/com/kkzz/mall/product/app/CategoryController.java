@@ -1,4 +1,4 @@
-package com.kkzz.mall.product.controller;
+package com.kkzz.mall.product.app;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.kkzz.mall.product.entity.CategoryEntity;
 import com.kkzz.mall.product.service.CategoryService;
-import com.kkzz.common.utils.PageUtils;
 import com.kkzz.common.utils.R;
 
 

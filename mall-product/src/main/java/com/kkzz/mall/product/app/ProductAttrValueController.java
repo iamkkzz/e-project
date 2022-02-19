@@ -1,4 +1,4 @@
-package com.kkzz.mall.product.controller;
+package com.kkzz.mall.product.app;
 
 import java.util.Arrays;
 import java.util.Map;
