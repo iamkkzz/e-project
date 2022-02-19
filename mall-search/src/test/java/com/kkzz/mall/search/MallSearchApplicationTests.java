@@ -51,6 +51,20 @@ class MallSearchApplicationTests {
             private String city;
             private String state;
         }
+
+    /**
+     * {
+     *     skuId
+     *     skuTitle
+     *     skuSubTitle
+     *     price
+     *     saleCount
+     *     attrs:[
+     *         {}
+     *     ]
+     * }
+     * @throws IOException
+     */
     @Test
     public void searchData() throws IOException {
         //创建检索条件
