@@ -12,12 +12,19 @@ import com.kkzz.mall.product.service.SkuInfoService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 @SpringBootTest
 class MallProductApplicationTests {
@@ -29,6 +36,9 @@ class MallProductApplicationTests {
 
     @Autowired
     CategoryService categoryService;
+
+    @Autowired
+    StringRedisTemplate redisTemplate;
     @Test
     void contextLoads() {
         SkuInfoEntity skuInfoEntity = new SkuInfoEntity();
@@ -44,6 +54,12 @@ class MallProductApplicationTests {
         if (i>0){
             System.out.println("成功11111");
         }
+    }
+    @Test
+    void redisTest(){
+        ValueOperations<String, String> ops = redisTemplate.opsForValue();
+        ops.set("hello","world"+ UUID.randomUUID().toString());
+        System.out.println(ops.get("hello"));
     }
 
 }
