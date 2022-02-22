@@ -37,10 +37,15 @@ spring:
           filters:
             - RewritePath=/api/(?<segment>/?.*), /renren-fast/$\{segment}
 
+        - id: mall_search_route
+          uri: lb://mall-search
+          predicates:
+            - Host=search.mall.com
+
         - id: mall_host_route
           uri: lb://mall-product
           predicates:
-            - Host=**.mall.com
+            - Host=mall.com
 
 
 ## 这里要注意路由的顺序,否则会发生覆盖的情况

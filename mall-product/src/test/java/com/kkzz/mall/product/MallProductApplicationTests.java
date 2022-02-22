@@ -2,6 +2,7 @@ package com.kkzz.mall.product;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.kkzz.mall.product.config.MyRedissonConfig;
 import com.kkzz.mall.product.dao.SkuInfoDao;
 import com.kkzz.mall.product.entity.BrandEntity;
 import com.kkzz.mall.product.entity.SkuInfoEntity;
@@ -10,6 +11,7 @@ import com.kkzz.mall.product.service.BrandService;
 import com.kkzz.mall.product.service.CategoryService;
 import com.kkzz.mall.product.service.SkuInfoService;
 import org.junit.jupiter.api.Test;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
@@ -39,6 +41,8 @@ class MallProductApplicationTests {
 
     @Autowired
     StringRedisTemplate redisTemplate;
+    @Autowired
+    RedissonClient redissonClient;
     @Test
     void contextLoads() {
         SkuInfoEntity skuInfoEntity = new SkuInfoEntity();
@@ -62,4 +66,8 @@ class MallProductApplicationTests {
         System.out.println(ops.get("hello"));
     }
 
+    @Test
+    void redissonTest(){
+        System.out.println(redissonClient.toString());
+    }
 }
