@@ -23,46 +23,52 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ThreadPoolExecutor;
 
 @SpringBootTest
 class MallSearchApplicationTests {
 
     @Autowired
     private RestHighLevelClient client;
+
     @Test
     public void contextLoads() {
         System.out.println(client);
     }
+
     @Data
     @ToString
-    static class Account{
-            private int account_number;
-            private int balance;
-            private String firstname;
-            private String lastname;
-            private int age;
-            private String gender;
-            private String address;
-            private String employer;
-            private String email;
-            private String city;
-            private String state;
-        }
+    static class Account {
+        private int account_number;
+        private int balance;
+        private String firstname;
+        private String lastname;
+        private int age;
+        private String gender;
+        private String address;
+        private String employer;
+        private String email;
+        private String city;
+        private String state;
+    }
 
     /**
      * {
-     *     skuId
-     *     skuTitle
-     *     skuSubTitle
-     *     price
-     *     saleCount
-     *     attrs:[
-     *         {}
-     *     ]
+     * skuId
+     * skuTitle
+     * skuSubTitle
+     * price
+     * saleCount
+     * attrs:[
+     * {}
+     * ]
      * }
+     *
      * @throws IOException
      */
     @Test
@@ -70,13 +76,13 @@ class MallSearchApplicationTests {
         //创建检索条件
         SearchRequest searchRequest = new SearchRequest("newbank");
         SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-        sourceBuilder.query(QueryBuilders.matchQuery("address","mill"));
+        sourceBuilder.query(QueryBuilders.matchQuery("address", "mill"));
         TermsAggregationBuilder ageAgg = AggregationBuilders.terms("ageAgg").field("age").size(10);
         sourceBuilder.aggregation(ageAgg);
         AvgAggregationBuilder balanceAgg = AggregationBuilders.avg("balanceAgg").field("balance");
         sourceBuilder.aggregation(balanceAgg);
 
-        System.out.println("检索条件"+sourceBuilder.toString());
+        System.out.println("检索条件" + sourceBuilder.toString());
         searchRequest.source(sourceBuilder);
 
         //执行检索
@@ -89,16 +95,16 @@ class MallSearchApplicationTests {
         for (SearchHit documentFields : hits1) {
             String sourceAsString = documentFields.getSourceAsString();
             Account account = JSON.parseObject(sourceAsString, Account.class);
-            System.out.println("account"+account.toString());
+            System.out.println("account" + account.toString());
         }
 
         //获取分析数据
         Aggregations aggregations = searchResponse.getAggregations();
         Terms ageAgg1 = aggregations.get("ageAgg");
         for (Terms.Bucket bucket : ageAgg1.getBuckets()) {
-            System.out.println("年龄"+bucket.getKeyAsString()+"有"+bucket.getDocCount()+"人");
+            System.out.println("年龄" + bucket.getKeyAsString() + "有" + bucket.getDocCount() + "人");
         }
         Avg balanceAgg1 = aggregations.get("balanceAgg");
-        System.out.println("平均薪资为"+balanceAgg1.getValue());
+        System.out.println("平均薪资为" + balanceAgg1.getValue());
     }
 }

@@ -3,13 +3,18 @@ package com.kkzz.mall.product;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.kkzz.mall.product.config.MyRedissonConfig;
+import com.kkzz.mall.product.dao.AttrGroupDao;
 import com.kkzz.mall.product.dao.SkuInfoDao;
+import com.kkzz.mall.product.dao.SkuSaleAttrValueDao;
 import com.kkzz.mall.product.entity.BrandEntity;
 import com.kkzz.mall.product.entity.SkuInfoEntity;
 import com.kkzz.mall.product.service.AttrGroupService;
 import com.kkzz.mall.product.service.BrandService;
 import com.kkzz.mall.product.service.CategoryService;
 import com.kkzz.mall.product.service.SkuInfoService;
+import com.kkzz.mall.product.vo.SkuItemSaleAttrsVo;
+import com.kkzz.mall.product.vo.SkuItemVo;
+import com.kkzz.mall.product.vo.SpuItemAttrGroupVo;
 import org.junit.jupiter.api.Test;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,21 +48,14 @@ class MallProductApplicationTests {
     StringRedisTemplate redisTemplate;
     @Autowired
     RedissonClient redissonClient;
+    @Autowired
+    AttrGroupDao attrGroupDao;
+    @Autowired
+    SkuSaleAttrValueDao saleAttrValueDao;
     @Test
     void contextLoads() {
-        SkuInfoEntity skuInfoEntity = new SkuInfoEntity();
-        skuInfoEntity.setSpuId(25L);
-        skuInfoEntity.setSaleCount(0L);
-        skuInfoEntity.setBrandId(19L);
-        skuInfoEntity.setCatalogId(225L);
-        skuInfoEntity.setSkuName("测试");
-        skuInfoEntity.setSkuSubtitle("这是一个测试");
-        skuInfoEntity.setSkuTitle("能通过吗");
-        skuInfoEntity.setPrice(BigDecimal.valueOf(6799));
-        int i = skuInfoDao.insert(skuInfoEntity);
-        if (i>0){
-            System.out.println("成功11111");
-        }
+        List<SkuItemSaleAttrsVo> saleAttrsBySpuId = saleAttrValueDao.getSaleAttrsBySpuId(38L);
+        System.out.println(saleAttrsBySpuId.toString());
     }
     @Test
     void redisTest(){
