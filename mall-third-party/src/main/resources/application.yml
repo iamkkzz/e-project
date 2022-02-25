@@ -9,6 +9,11 @@ spring:
         oss:
           endpoint: oss-cn-beijing.aliyuncs.com
           bucket: mall-kkzz
+        sms:
+          host: https://dfsns.market.alicloudapi.com
+          path: /data/send_sms
+          template-id: TPL_0000
+          appcode: 6bbaff1d28ba41159c45d34803518e18
   application:
     name: mall-third-party
 

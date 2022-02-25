@@ -47,6 +47,10 @@ spring:
           predicates:
             - Host=mall.com,item.mall.com
 
+        - id: mall_auth_route
+          uri: lb://mall-auth-server
+          predicates:
+            - Host=auth.mall.com
 
 ## 这里要注意路由的顺序,否则会发生覆盖的情况
 ## 前端醒目.默认都带api前缀
