@@ -1,6 +1,7 @@
 package com.kkzz.mall.product.app;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,12 @@ public class SkuSaleAttrValueController {
 
         return R.ok().put("page", page);
     }
+    @RequestMapping("/list/getattrvalue/{skuId}")
+    public R getAttrValue(@PathVariable("skuId") Long skuId){
+        List<String> valueList= skuSaleAttrValueService.getAttrValue(skuId);
 
+        return R.ok().put("data", valueList);
+    }
 
     /**
      * 信息
