@@ -15,10 +15,13 @@ import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.stream.Collectors;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -84,17 +87,46 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public CartVo getCart() {
-//        BoundHashOperations<String, Object, Object> cartOps = getCartOps();
-//        //分为登录和未登录,未登录就是直接获得所有的,登录了则需要进行合并
-//        UserInfoTo userInfoTo = CartInterceptor.threadLocal.get();
-//        if (userInfoTo.getUserId()==null){
-//            //未登录获取所有的商品信息,因为已经绑定
-//            cartOps.multiGet()
-//        }else {
-//
-//        }
-        return null;
+    public CartVo getCart() throws ExecutionException, InterruptedException {
+        CartVo cartVo = new CartVo();
+        BoundHashOperations<String, Object, Object> cartOps = getCartOps();
+        //分为登录和未登录,未登录就是直接获得所有的,登录了则需要进行合并
+        UserInfoTo userInfoTo = CartInterceptor.threadLocal.get();
+        List<CartItemVo> cartItemVos = new ArrayList<>();
+        if (userInfoTo.getUserId() == null) {
+            //未登录获取所有的商品信息,因为已经绑定
+            cartItemVos = getCartItemVos(cartOps);
+        } else {
+            //如果登录了,则合并临时购物车和查询redis中指定id的数据,已经有了对指定账号的操作
+            //获得临时购物车
+            String tempUserKey = CART_PREFIX + userInfoTo.getUserKey();
+            BoundHashOperations<String, Object, Object> tempCartOps = redisTemplate.boundHashOps(tempUserKey);
+            //取出临时购物车中数据加入到指定购物车中
+            List<CartItemVo> tempCartItems = getCartItemVos(tempCartOps);
+            if (tempCartItems != null && tempCartItems.size() > 0) {
+                for (CartItemVo tempCartItem : tempCartItems) {
+                    addCartItem(tempCartItem.getSkuId(), tempCartItem.getCount());
+                }
+            }
+            //清空临时账户购物车
+            clearCart(tempUserKey);
+            //获得合并后的购物车
+            cartItemVos = getCartItemVos(cartOps);
+        }
+        cartVo.setItems(cartItemVos);
+        return cartVo;
+    }
+
+    private List<CartItemVo> getCartItemVos(BoundHashOperations<String, Object, Object> cartOps) {
+        List<Object> values = cartOps.values();
+        List<CartItemVo> cartItemVos = new ArrayList<>();
+        if (values.size() > 0) {
+            cartItemVos = cartItemVos = values.stream().map(item -> {
+                CartItemVo cartItemVo = JSON.parseObject(item.toString(), CartItemVo.class);
+                return cartItemVo;
+            }).collect(Collectors.toList());
+        }
+        return cartItemVos;
     }
 
     @Override
@@ -103,6 +135,35 @@ public class CartServiceImpl implements CartService {
         String redisCartItem = (String) cartOps.get(skuId.toString());
         CartItemVo cartItemVo = JSON.parseObject(redisCartItem, CartItemVo.class);
         return cartItemVo;
+    }
+
+    @Override
+    public void clearCart(String cartKey) {
+        redisTemplate.delete(cartKey);
+    }
+
+    @Override
+    public void changeCount(Long skuId, Integer num) throws ExecutionException, InterruptedException {
+        BoundHashOperations<String, Object, Object> cartOps = getCartOps();
+        CartItemVo cartItem = getCartItem(skuId);
+        cartItem.setCount(num);
+        String s = JSON.toJSONString(cartItem);
+        cartOps.put(skuId.toString(), s);
+    }
+
+    @Override
+    public void check(Long skuId, Integer check) {
+        CartItemVo cartItem = getCartItem(skuId);
+        cartItem.setCheck(check == 1 ? true : false);
+        String redisCartItem = JSON.toJSONString(cartItem);
+        BoundHashOperations<String, Object, Object> cartOps = getCartOps();
+        cartOps.put(skuId.toString(), redisCartItem);
+    }
+
+    @Override
+    public void deleteItem(Long skuId) {
+        BoundHashOperations<String, Object, Object> cartOps = getCartOps();
+        cartOps.delete(skuId.toString());
     }
 
     /**

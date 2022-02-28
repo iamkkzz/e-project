@@ -8,7 +8,15 @@ import java.util.concurrent.ExecutionException;
 public interface CartService {
     CartItemVo addCartItem(Long skuId, Integer num) throws ExecutionException, InterruptedException;
 
-    CartVo getCart();
+    CartVo getCart() throws ExecutionException, InterruptedException;
 
     CartItemVo getCartItem(Long skuId);
+
+    void clearCart(String cartKey);
+
+    void changeCount(Long skuId, Integer num) throws ExecutionException, InterruptedException;
+
+    void check(Long skuId, Integer check);
+
+    void deleteItem(Long skuId);
 }
