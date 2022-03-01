@@ -15,9 +15,11 @@ import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -164,6 +166,27 @@ public class CartServiceImpl implements CartService {
     public void deleteItem(Long skuId) {
         BoundHashOperations<String, Object, Object> cartOps = getCartOps();
         cartOps.delete(skuId.toString());
+    }
+
+    @Override
+    public List<CartItemVo> getCurrentCartItems() {
+        BoundHashOperations<String, Object, Object> cartOps = getCartOps();
+        //查询到的redis中所有的数据
+        List<CartItemVo> cartItemVos = getCartItemVos(cartOps);
+        //这里我们应该去数据库中重新查询价格,因为价格会出现变动
+        List<Long> itemIds = cartItemVos.stream().filter(item -> item.getCheck()
+        ).map(item -> item.getSkuId()).collect(Collectors.toList());
+        if (itemIds!=null&&itemIds.size()>0){
+            //根据所有商品的id查询到最新的商品价格
+            Map<Long, BigDecimal> newPrice = productFeignService.getNewPrice(itemIds);
+            for (CartItemVo cartItemVo : cartItemVos) {
+                cartItemVo.setPrice((newPrice.get(cartItemVo.getSkuId())));
+            }
+            return cartItemVos;
+        }else {
+            return null;
+        }
+
     }
 
     /**

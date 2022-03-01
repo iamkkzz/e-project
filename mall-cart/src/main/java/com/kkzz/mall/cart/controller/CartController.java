@@ -9,7 +9,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Controller
@@ -38,19 +40,27 @@ public class CartController {
     }
 
     @GetMapping("/countItem")
-    public String changeCartItemCount(@RequestParam("skuId") Long skuId,@RequestParam("num") Integer num) throws ExecutionException, InterruptedException {
-        cartService.changeCount(skuId,num);
+    public String changeCartItemCount(@RequestParam("skuId") Long skuId, @RequestParam("num") Integer num) throws ExecutionException, InterruptedException {
+        cartService.changeCount(skuId, num);
         return "redirect:http://cart.mall.com/cart.html";
     }
 
     @GetMapping("/checkItem")
-    public String checkItem(@RequestParam("skuId") Long skuId,@RequestParam("checked") Integer check){
-        cartService.check(skuId,check);
+    public String checkItem(@RequestParam("skuId") Long skuId, @RequestParam("checked") Integer check) {
+        cartService.check(skuId, check);
         return "redirect:http://cart.mall.com/cart.html";
     }
+
     @GetMapping("/deleteItem")
-    public String deleteItem(@RequestParam("skuId")Long skuId){
+    public String deleteItem(@RequestParam("skuId") Long skuId) {
         cartService.deleteItem(skuId);
         return "redirect:http://cart.mall.com/cart.html";
+    }
+
+    @GetMapping(value = "/currentUserCartItems")
+    @ResponseBody
+    public List<CartItemVo> getCurrentCartItems() {
+        List<CartItemVo> cartItemVos = cartService.getCurrentCartItems();
+        return cartItemVos;
     }
 }

@@ -30,6 +30,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -66,6 +67,14 @@ class MallProductApplicationTests {
 
     @Test
     void redissonTest(){
-        System.out.println(redissonClient.toString());
+        List<Long> ids=new ArrayList<>();
+        ids.add(40L);
+        ids.add(41L);
+        ids.add(42L);
+        ids.add(43L);
+        List<SkuInfoEntity> skuInfoEntities = skuInfoDao.selectList(new QueryWrapper<SkuInfoEntity>().in("sku_id", ids));
+        for (SkuInfoEntity skuInfoEntity : skuInfoEntities) {
+            System.out.println(skuInfoEntity);
+        }
     }
 }

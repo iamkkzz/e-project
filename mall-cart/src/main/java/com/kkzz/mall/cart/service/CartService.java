@@ -3,6 +3,7 @@ package com.kkzz.mall.cart.service;
 import com.kkzz.mall.cart.vo.CartItemVo;
 import com.kkzz.mall.cart.vo.CartVo;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public interface CartService {
@@ -19,4 +20,6 @@ public interface CartService {
     void check(Long skuId, Integer check);
 
     void deleteItem(Long skuId);
+
+    List<CartItemVo> getCurrentCartItems();
 }
