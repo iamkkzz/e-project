@@ -14,4 +14,7 @@ public class OrderItemVo {
     private BigDecimal price;
     private BigDecimal totalPrice;
     private Integer count;
+
+    //psm_spu_info表中
+    private BigDecimal weight;
 }

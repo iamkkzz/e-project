@@ -18,9 +18,13 @@ public class MallFeignConfig {
             @Override
             public void apply(RequestTemplate template) {
                 ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-                HttpServletRequest request = requestAttributes.getRequest();
-                String cookie = request.getHeader("Cookie");
-                template.header("Cookie", cookie);
+                if (requestAttributes != null) {
+                    HttpServletRequest request = requestAttributes.getRequest();
+                    if (request != null) {
+                        String cookie = request.getHeader("Cookie");
+                        template.header("Cookie", cookie);
+                    }
+                }
             }
         };
     }

@@ -1,5 +1,6 @@
 package com.kkzz.mall.order;
 
+import com.kkzz.mall.order.dao.OrderDao;
 import com.kkzz.mall.order.entity.OrderEntity;
 import com.kkzz.mall.order.entity.OrderItemEntity;
 import com.rabbitmq.client.BuiltinExchangeType;
@@ -26,6 +27,8 @@ class MallOrderApplicationTests {
 
     @Autowired
     RabbitTemplate rabbitTemplate;
+    @Autowired
+    OrderDao orderDao;
 
     @Test
     void create() {
@@ -54,12 +57,18 @@ class MallOrderApplicationTests {
                 OrderItemEntity orderItemEntity = new OrderItemEntity();
                 orderItemEntity.setOrderId(1L);
                 rabbitTemplate.convertAndSend("hello.java.exchange", "hello", orderItemEntity);
-            }else {
+            } else {
                 OrderEntity orderEntity = new OrderEntity();
                 orderEntity.setOrderSn(UUID.randomUUID().toString());
                 rabbitTemplate.convertAndSend("hello.java.exchange", "hello", orderEntity);
             }
         }
     }
+
+//    @Test
+//    void test01() {
+//        OrderEntity order = orderDao.selectById(8L);
+//        System.out.println(order.toString());
+//    }
 
 }

@@ -21,5 +21,6 @@ public class SkuItemVo {
     List<SkuItemSaleAttrsVo> saleAttr;
     List<SpuItemAttrGroupVo> groupAttrs;
 
+    SeckillSkuRedisVo seckillInfo;
 
 }

@@ -8,6 +8,7 @@ public enum BizCodeEnume {
     PHONE_EXIST_EXCEPTION(15002,"手机号已经存在"),
     LOGINACCT_PASSWORD_EXCEPTION(15003,"账号密码错误"),
     SOCIAL_LOGIN_EXCEPTION(15004,"关联新用户失败"),
+    NO_STOCK_EXCEPTION(21000,"商品库存不足"),
     SMS_CODE_EXCEPTION(10002,"验证码获取频率过高,稍后再试");
 
     private int code;

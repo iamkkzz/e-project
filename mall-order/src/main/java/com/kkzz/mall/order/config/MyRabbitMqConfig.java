@@ -50,6 +50,7 @@ public class MyRabbitMqConfig {
              */
             @Override
             public void returnedMessage(Message message, int replyCode, String replyText, String exchange, String routingKey) {
+                //如果这里进行报错,那就是队列没有收到消息,没有持久化成功
                 System.out.println(
                         "Fail message: " + message + "replyCode: " + replyCode + "replyText: " + replyText +
                                 "exchange: " + exchange + "routingKey: " + routingKey

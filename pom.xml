@@ -22,5 +22,6 @@
         <module>mall-auth-server</module>
         <module>mall-search</module>
         <module>mall-cart</module>
+        <module>mall-seckill</module>
     </modules>
 </project>

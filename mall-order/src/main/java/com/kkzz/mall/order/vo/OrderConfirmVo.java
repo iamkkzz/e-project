@@ -4,6 +4,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class OrderConfirmVo {
@@ -19,6 +20,18 @@ public class OrderConfirmVo {
     BigDecimal payPrice;
     //防重令牌
     String orderToken;
+
+    Map<Long,Boolean> stocks;
+
+    public Integer getCount() {
+        Integer count = 0;
+        if (items != null && items.size() > 0) {
+            for (OrderItemVo item : items) {
+                count += item.getCount();
+            }
+        }
+        return count;
+    }
 
     public BigDecimal getTotal() {
         BigDecimal totalNum = BigDecimal.ZERO;

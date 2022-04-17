@@ -3,6 +3,7 @@ package com.kkzz.mall.order.interceptor;
 import com.kkzz.common.constant.AuthServerConstant;
 import com.kkzz.common.vo.MemberRespVo;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,15 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        boolean match = new AntPathMatcher().match("/order/order/status/**", request.getRequestURI());
+        if (match){
+            return true;
+        }
+        String requestURI = request.getRequestURI();
+        boolean match2 = new AntPathMatcher().match("/alipay/notify", request.getRequestURI());
+        if (match2){
+            return true;
+        }
         HttpSession session = request.getSession();
         MemberRespVo attribute = (MemberRespVo) session.getAttribute(AuthServerConstant.LOGIN_USER);
         if (attribute != null) {
